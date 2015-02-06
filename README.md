@@ -11,6 +11,8 @@ npm install [--save] express-partial-templates;
 ## Usage
 
 ```
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, '/views'));
 app.use(require('express-partial-templates')(app));
 
 ```
