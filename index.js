@@ -5,14 +5,28 @@ var _ = require('underscore'),
 
 var Parser = function (app) {
 
-    var ext = '.' + app.get('view engine');
-
-    var partials = traverse(app.get('views'));
+    var ext = '.' + app.get('view engine'),
+        partials;
 
     return function (req, res, next) {
-        res.locals.partials = res.locals.partials || {};
-        _.extend(res.locals.partials, partials);
-        next();
+
+        function setPartials() {
+            res.locals.partials = res.locals.partials || {};
+            _.extend(res.locals.partials, partials);
+            next();
+        }
+
+        if (!partials) {
+            traverse(app.get('views'), ext, function (err, files) {
+                if (err) { return next(err); }
+
+                partials = files;
+                setPartials();
+            });
+        } else {
+            setPartials();
+        }
+
     };
 };
 
