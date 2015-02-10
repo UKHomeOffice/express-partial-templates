@@ -5,9 +5,8 @@ var _ = require('underscore'),
 
 var Parser = function (app) {
 
-    var ext = '.' + app.get('view engine');
-
-    var partials = traverse(app.get('views'));
+    var ext = '.' + app.get('view engine'),
+        partials = traverse(app.get('views'), ext);
 
     return function (req, res, next) {
         res.locals.partials = res.locals.partials || {};
@@ -15,7 +14,5 @@ var Parser = function (app) {
         next();
     };
 };
-
-Parser.traverse = traverse;
 
 module.exports = Parser;
