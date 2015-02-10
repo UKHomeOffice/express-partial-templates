@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/UKHomeOffice/express-partial-templates",
   "dependencies": {
-    "fs-tree-traverse": "0.0.0",
+    "fs-tree-traverse": "0.1.0",
     "underscore": "^1.7.0"
   }
 }
