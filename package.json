@@ -1,10 +1,10 @@
 {
   "name": "express-partial-templates",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A middleware that will use the views path to create a partials key-value object that makes the file paths of partial templates acessible on the locals property of an HTTP response.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./test --require ./test/helper"
   },
   "repository": {
     "type": "git",
@@ -26,5 +26,11 @@
   "dependencies": {
     "fs-tree-traverse": "0.1.0",
     "underscore": "^1.7.0"
+  },
+  "devDependencies": {
+    "chai": "^2.1.1",
+    "mocha": "^2.2.1",
+    "sinon": "^1.13.0",
+    "sinon-chai": "^2.7.0"
   }
 }
