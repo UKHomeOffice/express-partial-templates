@@ -38,6 +38,19 @@ describe('partial-templates', function () {
             next = sinon.stub();
         });
 
+        it('does not overwrite existing partials', function () {
+            res.locals.partials = {
+                here: 'already'
+            };
+            partials(app)(req, res, next);
+            res.locals.partials.should.eql({
+                here: 'already',
+                layout: '/usr/test/layout',
+                'partials-a': '/usr/test/partials/a',
+                'partials-b': '/usr/test/partials/b'
+            });
+        });
+
         it('adds partial templates to res.locals', function () {
             partials(app)(req, res, next);
             res.locals.partials.should.eql({
