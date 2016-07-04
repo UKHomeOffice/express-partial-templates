@@ -69,6 +69,43 @@ describe('partial-templates', function () {
             });
         });
 
+        describe('multiple view directories', function () {
+            var common;
+
+            beforeEach(function () {
+                common = [
+                    '/usr/common/partials/c.html',
+                    '/usr/common/partials/d.html',
+                ];
+                app.get.withArgs('views').returns(['/usr/test', '/usr/common']);
+                traverse.listSync.onCall(0).returns(common);
+                traverse.listSync.onCall(1).returns(files);
+            });
+
+            it('adds all views to res.partials', function () {
+                partials(app)(req, res, next);
+                res.locals.partials.should.eql({
+                    layout: '/usr/test/layout',
+                    'partials-a': '/usr/test/partials/a',
+                    'partials-b': '/usr/test/partials/b',
+                    'partials-c': '/usr/common/partials/c',
+                    'partials-d': '/usr/common/partials/d'
+                });
+            });
+
+            it('prefers left hand directories if there are duplicate keys', function () {
+                traverse.listSync.onCall(0).returns([
+                  '/usr/common/partials/a.html'
+                ]);
+                partials(app)(req, res, next);
+                res.locals.partials.should.eql({
+                  layout: '/usr/test/layout',
+                  'partials-a': '/usr/test/partials/a',
+                  'partials-b': '/usr/test/partials/b'
+                });
+            });
+        });
+
     });
 
 });
