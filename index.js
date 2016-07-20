@@ -7,8 +7,8 @@ var Parser = function (app, options) {
 
     options = options || {};
 
-    var ext = '.' + app.get('view engine'),
-        partials = traverse(app.get('views'), ext, options.prefix);
+    var ext = options.ext || '.' + (app.get('view engine') || 'html'),
+        partials = traverse(options.partials || app.get('views'), ext, options.prefix);
 
     return function (req, res, next) {
         res.locals.partials = res.locals.partials || {};

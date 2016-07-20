@@ -1,6 +1,8 @@
-var partials = require('../');
+'use strict';
 
-var traverse = require('fs-tree-traverse');
+var partials = require('../');
+var fsTraverse = require('fs-tree-traverse');
+var proxyquire = require('proxyquire');
 
 describe('partial-templates', function () {
 
@@ -18,15 +20,51 @@ describe('partial-templates', function () {
         };
         app.get.withArgs('view engine').returns('html');
         app.get.withArgs('views').returns('/usr/test');
-        sinon.stub(traverse, 'listSync').returns(files);
+        sinon.stub(fsTraverse, 'listSync').returns(files);
     });
     afterEach(function () {
-        traverse.listSync.restore();
+        fsTraverse.listSync.restore();
     });
 
     it('returns a middleware function', function () {
         partials(app).should.be.a('function');
         partials(app).length.should.equal(3);
+    });
+
+    describe('options', function () {
+        var partials;
+        var traverseStub;
+
+        beforeEach(function () {
+            traverseStub = sinon.stub();
+            partials = proxyquire('../', {
+              './lib/traverse': traverseStub
+            });
+        });
+
+        it('calls traverse with partials path if provided', function () {
+            var path = '/path/to/partials';
+            partials(app, {
+              partials: path
+            });
+            traverseStub.args[0][0].should.be.equal(path);
+        });
+
+        it('calls traverse with ext if provided', function () {
+            var ext = '.mustache';
+            partials(app, {
+              ext: ext
+            });
+            traverseStub.args[0][1].should.be.equal(ext);
+        });
+
+        it('calls traverse with prefix if provided', function () {
+            var prefix = 'my-prefix';
+            partials(app, {
+              prefix: prefix
+            });
+            traverseStub.args[0][2].should.be.equal(prefix);
+        });
     });
 
     describe('middleware', function () {
@@ -78,8 +116,8 @@ describe('partial-templates', function () {
                     '/usr/common/partials/d.html',
                 ];
                 app.get.withArgs('views').returns(['/usr/test', '/usr/common']);
-                traverse.listSync.onCall(0).returns(common);
-                traverse.listSync.onCall(1).returns(files);
+                fsTraverse.listSync.onCall(0).returns(common);
+                fsTraverse.listSync.onCall(1).returns(files);
             });
 
             it('adds all views to res.partials', function () {
@@ -94,7 +132,7 @@ describe('partial-templates', function () {
             });
 
             it('prefers left hand directories if there are duplicate keys', function () {
-                traverse.listSync.onCall(0).returns([
+                fsTraverse.listSync.onCall(0).returns([
                   '/usr/common/partials/a.html'
                 ]);
                 partials(app)(req, res, next);
