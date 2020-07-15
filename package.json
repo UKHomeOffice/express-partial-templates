@@ -1,6 +1,6 @@
 {
   "name": "express-partial-templates",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A middleware that will use the views path to create a partials key-value object that makes the file paths of partial templates acessible on the locals property of an HTTP response.",
   "main": "index.js",
   "scripts": {
